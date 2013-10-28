@@ -29,10 +29,15 @@ import state
 class Tank(QWidget):
     """Draws and handles tank actions."""
 
-    def __init__(self, world, color):
+    RED = "red"
+    YELLOW = "yellow"
+    BLUE = "blue"
+
+    def __init__(self, world, name, color, brain):
         QWidget.__init__(self)
 
         self.world = world
+        self.name = name
         self.facing = state.FACING_RIGHT
         self.color = color
         self._images = dict()

@@ -35,16 +35,13 @@ class World(QWidget):
         self.tanks = []
         self.map = GrassMap(10, 10)
 
-        #red_tank = vehicle.Tank(self, state.FACING_UP, "red")
-        #self.tanks.append(red_tank)
-
-        red_tank = Tank(self, "red")
+        red_tank = Tank(self, Tank.RED)
         self.add_tank(red_tank)
 
-        yellow_tank = Tank(self, "yellow")
+        yellow_tank = Tank(self, Tank.YELLOW)
         self.add_tank(yellow_tank)
 
-        blue_tank = Tank(self, "blue")
+        blue_tank = Tank(self, Tank.BLUE)
         self.add_tank(blue_tank)
 
     def paintEvent(self, paint_event):
