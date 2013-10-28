@@ -21,6 +21,7 @@
 ###############################################################################
 
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtGui import QPainter, QPixmap
 
 import os, random
 #from tank import Tank
@@ -28,24 +29,21 @@ from symbols import Facing, Tile, Item
 import config
 
 
-#class VoidKill(Exception):
-#    pass
-#
-#class Drawable:
-#    def __init__(self, name, filename):
-#        self.name = name
-#        self.img = pyglet.resource.image(filename)
-#
-#    def blit(self, *args, **kwargs):
-#        self.img.blit(*args, **kwargs)
-#
-#    def __repr__(self):
-#        return "Drawable(%s)" % self.name
-
 
 class World(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+
+    def paintEvent(self, paint_event):
+        paint = QPainter(self)
+        paint.setRenderHint(QPainter.Antialiasing)
+
+        pixmap = QPixmap("tank/blue_up.png")
+        h = pixmap.height()
+        w = pixmap.width()
+        print("pixmap size [%d x %d]" % (w, h))
+
+        paint.drawPixmap(0, 0, pixmap)
 
 #class World:
 #    '''Generates, draws, and provides info about game worlds.'''

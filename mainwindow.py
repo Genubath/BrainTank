@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow ,QWidget
+from PyQt5.QtCore import QRectF
+from PyQt5.QtWidgets import QApplication, QMainWindow ,QGraphicsScene, QGraphicsView, QWidget
 
 from world import *
 
