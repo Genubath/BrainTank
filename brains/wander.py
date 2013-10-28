@@ -22,7 +22,7 @@
 
 import random
 
-from brain import Brain
+from brains import Brain
 
 
 class WanderBrain(Brain):
