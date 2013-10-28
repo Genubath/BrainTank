@@ -81,12 +81,12 @@ def think(game):
     dx, dy = game.direction
 
     global counter
-    print "counter is", counter
+    print ("counter is", counter)
     counter += 1
 
     tile, item = game.radar(x + dx, y + dy)
-    print "at", x, y, "and facing", game.facing
-    print "will be moving into:", tile, item
+    print ("at", x, y, "and facing", game.facing)
+    print ("will be moving into:", tile, item)
 
     def new_facing():
         # out of all facing possibilities, choose one we don't have currently
@@ -118,5 +118,5 @@ def think(game):
         # 1 out of 3 times try to shoot
         game.shoot()
 
-    print "brain queue:", game.memory
+    print ("brain queue:", game.memory)
 

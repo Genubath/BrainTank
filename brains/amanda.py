@@ -91,11 +91,11 @@ def think(game):
         # out of all facing possibilities, choose one we don't have currently
 #         new_facing = [game.UP, game.DOWN, game.LEFT, game.RIGHT]
 #         new_facing.remove(game.facing)
-        print game.tank_positions
+        print (game.tank_positions)
         enemy = game.tank_positions[0]
         #Randomly decide to move either vertically or horizontally
         mynum = random.randint(0,1)
-        print "MY NUM: %s" % mynum
+        print ("MY NUM: %s" % mynum)
         vertical = False
         if mynum == 0:
             #Move horizontal
@@ -123,8 +123,8 @@ def think(game):
             if ni is None and nt not in (None, game.WATER):
                 good_facing.append(f)
 
-        print "GOOD FACING : %s" % good_facing
-        print "NEW FACING : %s" % new_facing
+        print ("GOOD FACING : %s" % good_facing)
+        print ("NEW FACING : %s" % new_facing)
 
         if game.facing in good_facing:
             game.shoot()
@@ -146,7 +146,7 @@ def think(game):
         for f in new_facing:
             v = game.FACING_TO_VEC[f]
             nt, ni = game.radar(x + v[0], y + v[1])
-            print nt, ni
+            print (nt, ni)
             if ni is None and nt not in (None, game.WATER):
                 good_facing.append(f)
 
@@ -172,5 +172,5 @@ def think(game):
         game.forward()
 
 
-    print "brain queue:", game.memory
+    print ("brain queue:", game.memory)
 

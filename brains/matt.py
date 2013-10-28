@@ -87,7 +87,7 @@ def map_path(game, src, dst):
     open_set = set([dst])
     open_heap = [(0, path_step(pos=dst, parent=None))]
 
-    print 'trying to map', src, 'to', dst
+    print('trying to map', src, 'to', dst)
 
     closed_set = set()
 
@@ -141,18 +141,18 @@ def think(game):
     if len(path) > 1 and not game.memory:
         VEC_TO_FACING = {val: key for key,val in game.FACING_TO_VEC.items()}
 
-        print game.memory
-        print [z==game.SHOOT for z in game.memory]
-        print [type(z) for z in game.memory]
+        print (game.memory)
+        print ([z==game.SHOOT for z in game.memory])
+        print ([type(z) for z in game.memory])
 
         first = path[1]
         # print path
-        print first, (x,y), (first[0]-x, first[1]-y)
+        print (first, (x,y), (first[0]-x, first[1]-y))
         facing = VEC_TO_FACING[(first[0]-x, first[1]-y)]
 
         game.face(facing)
         game.shoot()
         game.forward()
 
-    print "brain queue:", game.memory
+    print ("brain queue:", game.memory)
 
