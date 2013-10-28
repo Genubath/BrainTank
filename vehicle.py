@@ -60,40 +60,6 @@ class Tank(QWidget):
         return self._images[self.facing]
 
 
-    #def load_resources(self):
-    #
-    #    def load(dir):
-    #        pack = "tank"
-    #        col = self.color
-    #        return pyglet.resource.image('%s/%s_%s.png' % (pack, col, dir))
-    #
-    #    self.up = load('up')
-    #    self.down = load('down')
-    #    self.left = load('left')
-    #    self.right = load('right')
-    #
-    #    # build images
-    #    img = pyglet.resource.image('tank/bullet.png')
-    #    img.anchor_x = img.width * 0.5
-    #    img.anchor_y = img.height * 0.5
-    #
-    #    # lookup table for bullet facing
-    #    self.bullet_facing_img = {
-    #        Facing.UP:    img.get_transform(rotate=0),
-    #        Facing.RIGHT: img.get_transform(rotate=90),
-    #        Facing.DOWN:  img.get_transform(rotate=180),
-    #        Facing.LEFT:  img.get_transform(rotate=270),
-    #    }
-    #
-    #    # lookup table for tank facing
-    #    self.tank_facing_img = {
-    #        Facing.UP:    self.up,
-    #        Facing.RIGHT: self.right,
-    #        Facing.DOWN:  self.down,
-    #        Facing.LEFT:  self.left,
-    #    }
-    #
-
     #def read_command(self):
     #    '''Pop a command from the brain memory and interpret it'''
     #    if self.brain:
