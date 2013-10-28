@@ -20,12 +20,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
+import uuid
+
 from PyQt5.QtCore import QRectF
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QWidget
 
-import state
-import vehicle
+from vehicle import Tank
 
 
 class World(QWidget):
@@ -37,14 +38,24 @@ class World(QWidget):
         #red_tank = vehicle.Tank(self, state.FACING_UP, "red")
         #self.tanks.append(red_tank)
 
+        red_tank = Tank(self, "red")
+        self.add_tank(red_tank)
+
+        yellow_tank = Tank(self, "yellow")
+        self.add_tank(yellow_tank)
+
+        blue_tank = Tank(self, "blue")
+        self.add_tank(blue_tank)
+
     def paintEvent(self, paint_event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
         self.map.render_map(painter)
 
-    def add_tank(self, t):
-        pass
+    def add_tank(self, tank):
+        self.tanks.append(tank)
+        self.map.add_tank(tank)
 
 
 class Tile:
@@ -81,6 +92,28 @@ class AbstractMap:
         self.width = width
         self.height = height
         self._tiles = []
+        self._tanks = []
+        self._starting_areas = []
+
+    def add_tank(self, tank: Tank):
+        _start_tile = self._starting_areas.pop(0)
+        _x, _y = AbstractMap.tile_at(_start_tile)
+        _id = uuid.uuid4()
+        self._tanks.append((_id, _x, _y, tank))
+
+    @staticmethod
+    def tile_at(point: tuple):
+        _x, _y = point
+        return _x*101, _y*77
+
+    def render_map(self, painter):
+        """
+        @type painter: QPainter
+        """
+        self._render_background(painter)
+        self._render_tanks(painter)
+        # render deductibles
+        # render tanks
 
     def _render_background(self, painter):
         """
@@ -91,6 +124,11 @@ class AbstractMap:
                 tile = self._tiles[y][x]
                 box = tile.bounding_box()
                 painter.drawPixmap(101*x, 77*y, tile.pixmap, box.x(), box.y(), box.width(), box.height())
+
+    def _render_tanks(self, painter):
+        for tinfo in self._tanks:
+            _id, _x, _y, _tank = tinfo
+            painter.drawPixmap(_x, _y, _tank.pixmap)
 
 
 class GrassMap(AbstractMap):
@@ -104,12 +142,8 @@ class GrassMap(AbstractMap):
             for x in range(self.width):
                 self._tiles[y].append(GrassTile())
 
-    def render_map(self, painter):
-        """
-        @type painter: QPainter
-        """
-        self._render_background(painter)
-        # render deductibles
-        # render tanks
-
-
+        # set starting areas
+        self._starting_areas.append((0, 0))
+        self._starting_areas.append((self.width-1, 0))
+        self._starting_areas.append((0, self.height-1))
+        self._starting_areas.append((self.width-1, self.height-1))

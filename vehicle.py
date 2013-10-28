@@ -25,133 +25,36 @@ from PyQt5.QtWidgets import QWidget
 
 import state
 
-#class Bullet:
-#    '''Represents a moving bullet with facing'''
-#
-#    def __init__(self, tank):
-#        self.tank = tank
-#        self.speed = 200
-#
-#        self.facing = tank.get_facing()
-#
-#        self.img = tank.bullet_facing_img[self.facing]
-#        self.hw = self.img.width * 0.5
-#        self.hh = self.img.height * 0.5
-#
-#        self.x, self.y = tank.get_position()
-#        self.x, self.y = tank.world.world_to_screen(self.x, self.y)
-#
-#        ts = tank.world.tile_size
-#
-#        if self.facing is Facing.UP:
-#            self.x += ts[0] * 0.5
-#            self.y -= ts[1] * 0.5
-#        elif self.facing is Facing.DOWN:
-#            self.x += ts[0] * 0.5
-#            self.y += ts[1] * 0.5
-#        elif self.facing is Facing.RIGHT:
-#            self.x += ts[0]
-#        elif self.facing is Facing.LEFT:
-#            pass
-#
-#    def __repr__(self):
-#        return "Bullet(%s)" % self.tank.color
-#
-#    def rect(self):
-#        '''Returns a Rect suitable for collision detection'''
-#        return Rect(self.x-self.hw, self.y-self.hh, self.img.width, self.img.height)
-#
-#    def draw(self):
-#        #print "drawing bullet at", self.x, self.y
-#        hw, hh = self.hw, self.hh
-#        self.img.blit(self.x, self.y)
-#
-#        #self.rect().debug_draw()
-#
-#    def update(self, dt):
-#        step = self.speed * dt
-#        dx, dy = FACING_TO_VEC[self.facing]
-#        self.x += dx * step
-#        self.y -= dy * step
-
 
 class Tank(QWidget):
-    '''Draws and handles tank actions.'''
+    """Draws and handles tank actions."""
 
-    def __init__(self, world, facing, color):
+    def __init__(self, world, color):
         QWidget.__init__(self)
 
-        #self.set_position(x,y)
-        self.facing = facing
+        self.world = world
+        self.facing = state.FACING_RIGHT
         self.color = color
+        self._images = dict()
 
         self.offset_dt = (0,0)
         self.offset = (0,0)
 
-        #self.state = TankState.IDLE
-        #self.driving_forward = True
-        #self.animation = None
         #self.brain = Brain(self)
-        #self.world = world
-        #self.bullet = None
-        #self.shots = 0
 
         # speed is per second
         self.speed = 100
         self.reduced_speed = self.speed *0.5
 
-        #self.load_resources()
-
     @property
     def pixmap(self):
-        return QPixmap("tank/%s_%s.png" % (self.color, self.facing_as_str))
+        if self.facing not in self._images:
+            pix = QPixmap("tank/%s_%s.png" % (self.color, state.facing_to_string(self.facing)))
+            self._images[self.facing] = pix
 
-    @property
-    def facing_as_str(self):
-        if self.facing == state.FACING_UP:
-            return "up"
-        elif self.facing == state.FACING_DOWN:
-            return "down"
-        elif self.facing == state.FACING_LEFT:
-            return "left"
-        else:
-            return "right"
+        return self._images[self.facing]
 
-    #def __str__(self):
-    #    return "%s tank" % self.color
-    #
-    #def __repr__(self):
-    #    return "Tank(%s)" % self.color
-    #
-    #def rect(self):
-    #    '''Returns a Rect suitable for collision'''
-    #    x,y = self.world.world_to_screen(self.x, self.y)
-    #    x += self.offset[0]
-    #    y += self.offset[1] - self.world.half_stack
-    #    return Rect(x, y, self.world.tile_size[0], -self.world.tile_size[1])
-    #
-    #def get_facing(self):
-    #    '''Returns the facing as Facing.LEFT, Facing.RIGHT, etc'''
-    #    return self.facing
-    #
-    #def get_facing_vector(self):
-    #    '''Returns the facing as (dx,dy)'''
-    #    return FACING_TO_VEC[self.facing]
-    #
-    #def get_position(self):
-    #    '''Returns position (x,y) as a tuple'''
-    #    return (self.x, self.y)
-    #
-    #def get_warp_destination(self):
-    #    '''Used in World to get the tank's warp coordinates.'''
-    #    return (self.warp_x, self.warp_y)
-    #
-    #def set_position(self, x, y):
-    #    self.x = x
-    #    self.y = y
-    #    self.warp_x = None
-    #    self.warp_y = None
-    #
+
     #def load_resources(self):
     #
     #    def load(dir):
@@ -185,12 +88,7 @@ class Tank(QWidget):
     #        Facing.LEFT:  self.left,
     #    }
     #
-    #def blit(self, x, y, z):
-    #    x += self.offset[0]
-    #    y += self.offset[1]
-    #    self.tank_facing_img[self.facing].blit(x, y, z)
-    #    #self.rect().debug_draw()
-    #
+
     #def read_command(self):
     #    '''Pop a command from the brain memory and interpret it'''
     #    if self.brain:
@@ -230,12 +128,7 @@ class Tank(QWidget):
     #            #print self.color, 'is SHOOTING'
     #            self.state = TankState.SHOOTING
     #
-    #def stop(self):
-    #    '''Stop current state and return to idle.'''
-    #    self.offset = (0,0)
-    #    self.animation = None
-    #    self.state = TankState.IDLE
-    #
+
     #def update(self, dt):
     #    '''Process tank state, with respect to time'''
     #    if self.animation:
@@ -310,18 +203,3 @@ class Tank(QWidget):
     #
     #            self.offset = (dt[0]*anim.value*sign+jitter[0],
     #                           -dt[1]*anim.value*sign+jitter[1])
-    #
-    #
-    #def is_idle(self):
-    #    return self.state is TankState.IDLE
-    #
-    #def kill(self):
-    #    print "BANG! %s is dead." % self.color
-    #
-    #    self.state = TankState.DEAD
-    #
-    #    if self.brain:
-    #        self.brain.detach()
-    #        self.world.detonate(self)
-    #
-
