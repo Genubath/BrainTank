@@ -20,7 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-'''
+"""
 Wander Brain
 
 This is a sample wandering brain. It just drives until it
@@ -68,7 +68,7 @@ Items:
 Lookup Helper Dictionaries:
     FACING_TO_VEC - takes a facing symbol and returns the (x,y) unit vector
 
-'''
+"""
 
 import random
 
