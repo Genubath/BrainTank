@@ -23,8 +23,6 @@ class BrainTankWindow(QMainWindow):
             self.play_soundtrack()
 
     def play_soundtrack(self):
-        print("starting soundtrack...")
-
         project_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
         url = QUrl.fromLocalFile("%s/Sounds/xmasmyth.mp3" % project_dir)
         mp3 = QMediaContent(url)
