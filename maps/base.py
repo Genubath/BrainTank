@@ -21,38 +21,9 @@
 
 import uuid
 
-from PyQt5.QtCore import QRectF
-from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5.QtGui import QPainter
 
 from vehicle import Tank
-
-class Tile:
-    # possible tile types
-    DIRT = 'dirt'
-    GRASS = 'grass'
-    WATER = 'water'
-
-    def __init__(self):
-        self.type = None
-        self.pixmap = None
-
-    @staticmethod
-    def bounding_box():
-        return QRectF(0, 55, 101, 77)
-
-
-class DirtTile(Tile):
-    def __init__(self):
-        Tile.__init__(self)
-        self.type = Tile.DIRT
-        self.pixmap = QPixmap("PlanetCute/Dirt_Block.png")
-
-
-class GrassTile(Tile):
-    def __init__(self):
-        Tile.__init__(self)
-        self.type = Tile.GRASS
-        self.pixmap = QPixmap("PlanetCute/Grass_Block.png")
 
 
 class AbstractMap:
@@ -97,21 +68,3 @@ class AbstractMap:
         for tinfo in self._tanks:
             _id, _x, _y, _tank = tinfo
             painter.drawPixmap(_x, _y, _tank.pixmap)
-
-
-class GrassMap(AbstractMap):
-    """
-    Implementation of an actual usable game map
-    """
-    def __init__(self, width, height):
-        AbstractMap.__init__(self, width, height)
-        for y in range(self.height):
-            self._tiles.append([])
-            for x in range(self.width):
-                self._tiles[y].append(GrassTile())
-
-        # set starting areas
-        self._starting_areas.append((0, 0))
-        self._starting_areas.append((self.width-1, 0))
-        self._starting_areas.append((0, self.height-1))
-        self._starting_areas.append((self.width-1, self.height-1))

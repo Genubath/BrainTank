@@ -24,14 +24,14 @@ from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QWidget
 
 from brains.wander import WanderBrain
-from maps import *
+import maps
 from vehicle import Tank
 
 
 class World(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.map = GrassMap(10, 10)
+        self.map = maps.GrassMap(10, 10)
 
         red_tank = Tank(self, "Christopher Eccleston", Tank.RED, WanderBrain())
         self.add_tank(red_tank)
@@ -41,6 +41,8 @@ class World(QWidget):
 
         blue_tank = Tank(self, "Matt Smith", Tank.BLUE, WanderBrain())
         self.add_tank(blue_tank)
+
+        # probably have a timer here to trigger the map update
 
     def paintEvent(self, paint_event):
         painter = QPainter(self)
