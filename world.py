@@ -20,122 +20,192 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QPixmap
+import random
 
-import os, random
-#from tank import Tank
-from symbols import Facing, Tile, Item
+from PyQt5.QtCore import QRectF, QPointF
+from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QWidget
+
 import config
 
+
+class Tile(QGraphicsPixmapItem):
+    def __init__(self, parent=None):
+        QGraphicsPixmapItem.__init__(self, parent)
+
+
+class DirtTile(Tile):
+    def __init__(self):
+        Tile.__init__(self)
+        self.setPixmap(QPixmap("PlanetCute/Dirt_Block.png"))
+
+
+class GrassTile(Tile):
+    def __init__(self):
+        Tile.__init__(self)
+        self.setPixmap(QPixmap("PlanetCute/Grass_Block.png"))
 
 
 class World(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+        self.rand = random.SystemRandom()
+
+        #self.map = World.build_map()
+        #self.render_map()
 
     def paintEvent(self, paint_event):
         paint = QPainter(self)
         paint.setRenderHint(QPainter.Antialiasing)
 
-        pixmap = QPixmap("tank/blue_up.png")
-        h = pixmap.height()
-        w = pixmap.width()
-        print("pixmap size [%d x %d]" % (w, h))
+        pixmap = QPixmap("PlanetCute/Grass_Block.png")
+        paint.drawPixmap(0, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 0, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 0, pixmap, 0, 55, 101, 77)
 
-        paint.drawPixmap(0, 0, pixmap)
+        paint.drawPixmap(0, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 77, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 77, pixmap, 0, 55, 101, 77)
 
-#class World:
-#    '''Generates, draws, and provides info about game worlds.'''
-#
-#    def __init__(self, width, height, seed=None):
-#        self.width = width
-#        self.height = height
-#        self.rand = random.Random()
-#        self.rand.seed(seed)
-#
-#        self.bullets = []
-#        self.explosions = []
-#        self.game_over = False
-#
-#        self.TILE_TO_ENUM = {}
-#        self.ITEM_TO_ENUM = {}
-#
-#        self.load_resources()
-#        self.generate_map()
-#        if self.has_sound:
-#            self.play_music()
-#
-#    def get_tile(self, x, y):
-#        '''Returns a (tile, item) tuple.
-#           tile will be a type:
-#               world.grass, dirt, etc
-#           item will be None or an item:
-#               world.rock, tree, etc
-#           '''
-#        if not(x >= 0 and x < self.width):
-#            return (None, None)
-#
-#        if not(y >= 0 and y < self.height):
-#            return (None, None)
-#
-#        return self.__map[y][x]
-#
-#    def get_tile_enum(self, x, y):
-#        '''Returns a (tile, item) tuple in enum form.
-#            tile will be a value from symbols.Tile
-#            item will be a value from symbols.Item'''
-#
-#        tile, item = self.get_tile(x,y)
-#        return self.TILE_TO_ENUM[tile], self.ITEM_TO_ENUM[item]
-#
-#    def load_resources(self):
-#
-#        def load(name):
-#            pack = "PlanetCute"
-#            return Drawable(name, '%s/%s.png' % (pack, name))
-#
-#        self.grass = load('Grass Block')
-#        self.dirt = load('Dirt Block')
-#        #self.wall = load('Stone Block Tall')
-#        #self.brown = load('Brown Block')
-#        self.plain = load('Plain Block')
-#        self.water = load('Water Block')
-#
-#        self.safe = (self.dirt, self.grass, self.plain)
-#        self.unsafe = (self.water,)
-#
-#        self.tiles = self.safe + self.unsafe
-#        self.blocking_tiles = []
-#
-#        #self.spawn = load('Selector')
-#        self.rock = load('Rock')
-#        self.tree = load('Tree Tall')
-#        #self.bush = load('Tree Short')
-#        #self.heart = load('Heart')
-#        #self.gem = load('Gem Blue')
-#
-#        self.items = (self.rock, self.tree)
-#        self.blocking_items = self.items
-#        self.destructible = self.items
-#
-#        self.tile_height = 171
-#        self.tile_width = 101
-#
-#        self.half_stack = 43
-#        self.tile_size = (101, -81)
-#        self.tile_size_inv = (1.0/self.tile_size[0], 1.0/self.tile_size[1])
-#        self.start_x = 0
-#        self.start_y = (self.height-1) * -self.tile_size[1]
-#
-#        try:
-#            self.main_music = pyglet.resource.media('Sounds/xmasmyth.mp3')
-#            self.has_sound = True
-#        except pyglet.media.riff.WAVEFormatException:
-#            if config.DEBUG:
-#                print "sound is DISABLED, please install avbin"
-#            self.has_sound = False
-#
+        paint.drawPixmap(0, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 154, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 154, pixmap, 0, 55, 101, 77)
+
+        paint.drawPixmap(0, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 231, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 231, pixmap, 0, 55, 101, 77)
+
+        paint.drawPixmap(0, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 308, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 308, pixmap, 0, 55, 101, 77)
+
+        paint.drawPixmap(0, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 385, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 385, pixmap, 0, 55, 101, 77)
+
+        paint.drawPixmap(0, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 462, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 462, pixmap, 0, 55, 101, 77)
+
+        paint.drawPixmap(0, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 539, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 539, pixmap, 0, 55, 101, 77)
+
+        paint.drawPixmap(0, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 616, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 616, pixmap, 0, 55, 101, 77)
+
+        paint.drawPixmap(0, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(101, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(202, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(303, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(404, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(505, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(606, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(707, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(808, 693, pixmap, 0, 55, 101, 77)
+        paint.drawPixmap(909, 693, pixmap, 0, 55, 101, 77)
+
+        tank = QPixmap("tank/blue_up.png")
+        paint.drawPixmap(303, 77, tank)
+
+    @staticmethod
+    def build_map(self):
+        map = []
+
+        row1 = []
+        for r in range(0, 10):
+            row1.append(GrassTile())
+        map.append(row1)
+
+        row2 = []
+        for r in range(0, 10):
+            row2.append(GrassTile())
+        map.append(row2)
+
+        row3 = []
+        for r in range(0, 5):
+            row3.append(GrassTile())
+            row3.append(DirtTile())
+        map.append(row3)
+
+        row4 = []
+        for r in range(0, 10):
+            row4.append(GrassTile())
+        map.append(row4)
+
+        return map
+
+    def render_map(self):
+        for y in range(0, len(self.map)):
+            for x in range(0, len(self.map[y])):
+                #pi = self.scene.addPixmap(self.map[y][x].pixmap)
+                pass
+
+
 #    def play_music(self):
 #        self.main_music.play()
 #

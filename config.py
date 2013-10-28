@@ -24,3 +24,5 @@
 # for now only the first two are loaded...
 
 DEBUG = False
+WIDTH = 10
+HEIGHT = 4

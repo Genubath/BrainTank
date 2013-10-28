@@ -20,9 +20,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-import pyglet
-from pyglet.window import key
-import pyglet.gl as gl
 import os, random
 from utils import Animation, Rect
 from brain import Brain
