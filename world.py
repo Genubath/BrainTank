@@ -20,13 +20,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-import random
-
-from PyQt5.QtCore import QRectF, QPointF
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QWidget
-
-import config
 
 
 class Tile(QGraphicsPixmapItem):
@@ -50,7 +45,6 @@ class World(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
 
-
     def paintEvent(self, paint_event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
@@ -60,7 +54,8 @@ class World(QWidget):
         tank = QPixmap("tank/blue_up.png")
         painter.drawPixmap(303, 77, tank)
 
-    def render_map_background(self, painter):
+    @staticmethod
+    def render_map_background(painter):
         pixmap = QPixmap("PlanetCute/Grass_Block.png")
         painter.drawPixmap(0, 0, pixmap, 0, 55, 101, 77)
         painter.drawPixmap(101, 0, pixmap, 0, 55, 101, 77)
