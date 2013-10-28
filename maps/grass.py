@@ -19,16 +19,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-import maps
+from maps import BaseMap
 from tiles import *
 
 
-class GrassMap(maps.AbstractMap):
+class GrassMap(BaseMap):
     """
     Implementation of an actual usable game map
     """
     def __init__(self, width, height):
-        maps.AbstractMap.__init__(self, width, height)
+        BaseMap.__init__(self, width, height)
         for y in range(self.height):
             self._tiles.append([])
             for x in range(self.width):

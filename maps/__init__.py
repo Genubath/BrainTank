@@ -19,5 +19,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-from maps.base import AbstractMap
+from maps.abstract import AbstractMap
+from maps.base import BaseMap
 from maps.grass import GrassMap
