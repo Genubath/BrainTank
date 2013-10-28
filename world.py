@@ -92,7 +92,7 @@ class World(QWidget):
 #    def load_resources(self):
 #
 #        def load(name):
-#            pack = "PlanetCute PNG"
+#            pack = "PlanetCute"
 #            return Drawable(name, '%s/%s.png' % (pack, name))
 #
 #        self.grass = load('Grass Block')
