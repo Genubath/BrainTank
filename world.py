@@ -20,28 +20,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-import uuid
-
-from PyQt5.QtCore import QRectF
-from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QWidget
 
+from brains.wander import WanderBrain
+from maps import *
 from vehicle import Tank
 
 
 class World(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.tanks = []
         self.map = GrassMap(10, 10)
 
-        red_tank = Tank(self, Tank.RED)
+        red_tank = Tank(self, "Christopher Eccleston", Tank.RED, WanderBrain())
         self.add_tank(red_tank)
 
-        yellow_tank = Tank(self, Tank.YELLOW)
+        yellow_tank = Tank(self, "David Tennant", Tank.YELLOW, WanderBrain())
         self.add_tank(yellow_tank)
 
-        blue_tank = Tank(self, Tank.BLUE)
+        blue_tank = Tank(self, "Matt Smith", Tank.BLUE, WanderBrain())
         self.add_tank(blue_tank)
 
     def paintEvent(self, paint_event):
@@ -51,7 +49,6 @@ class World(QWidget):
         self.map.render_map(painter)
 
     def add_tank(self, tank):
-        self.tanks.append(tank)
         self.map.add_tank(tank)
 
 
