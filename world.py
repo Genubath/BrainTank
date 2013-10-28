@@ -24,7 +24,7 @@ from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QWidget
 
 import state
-import tank
+import vehicle
 
 #class Tile(QGraphicsPixmapItem):
 #    def __init__(self, parent=None):
@@ -48,7 +48,7 @@ class World(QWidget):
         QWidget.__init__(self, parent)
         self.tanks = []
 
-        red_tank = tank.Tank(self, state.FACING_UP, "red")
+        red_tank = vehicle.Tank(self, state.FACING_UP, "red")
         self.tanks.append(red_tank)
 
     def paintEvent(self, paint_event):
@@ -64,6 +64,9 @@ class World(QWidget):
         """
         for t in self.tanks:
             painter.drawPixmap(200, 200, t.pixmap)
+
+    def add_tank(self, t):
+        pass
 
     @staticmethod
     def render_map_background(painter):
@@ -177,3 +180,8 @@ class World(QWidget):
         painter.drawPixmap(707, 693, pixmap, 0, 55, 101, 77)
         painter.drawPixmap(808, 693, pixmap, 0, 55, 101, 77)
         painter.drawPixmap(909, 693, pixmap, 0, 55, 101, 77)
+
+
+class Map:
+    def __init__(self):
+        pass
