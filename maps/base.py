@@ -33,20 +33,34 @@ class BaseMap(AbstractMap):
     def update(self):
         # for each projectile... update it...
         bullets_to_delete = []
+        tanks_to_delete = []
         for _id, bullet_info in self._projectiles.items():
             _tile, bullet = bullet_info
 
-            # destroy the bullet if it has already reached the edge
+            # mark the bullet for destruction if it has already reached the edge
             _x, _y = _tile
             if _x == 0 or _x == self.width-1 or _y == 0 or _y == self.height-1:
                 bullets_to_delete.append(_id)
             else:
                 _updated_info = self.move_it(command.MOVE_FORWARD, bullet_info)
                 self._projectiles[_id] = _updated_info
+                # now that the bullet is updated we need to see if it killed any tank
+                for _tank_id, tank_info in self._tanks.items():
+                    _tank_tile, _tank = tank_info
+                    _tank_x, _tank_y = _tank_tile
+                    if _x == _tank_x and _y == _tank_y:
+                        # boom... hopefully it's not a dud
+                        if bullet.fired_by != _tank_id:
+                            tanks_to_delete.append(_tank_id)
+                            _destroyer_id, _destroyer = self._tanks[bullet.fired_by]
+                            print("BOOM!!! %s was destroyed by %s!" % (_tank.name, _destroyer.name))
 
-        # delete bullets that were scheduled to be destroyed because this can't be done in the loop
+        # delete bullets and tanks that were scheduled to be destroyed because this can't be done in the loop
         for id in bullets_to_delete:
             del self._projectiles[id]
+
+        for id in tanks_to_delete:
+            del self._tanks[id]
 
         # for each tank check to see if it has an action
         # if it does... update it... if not ask for another action
@@ -54,12 +68,12 @@ class BaseMap(AbstractMap):
             _tile, tank = tank_info
             if tank.state is state.TANK_IDLE:
                 _action = tank.get_next_action()
-                _updated_info = self.move_it(_action, tank_info)
+                _updated_info = self.move_it(_action, tank_info, _id)
                 self._tanks[_id] = _updated_info
 
         self.world.update()
 
-    def move_it(self, _action, _info: tuple):
+    def move_it(self, _action, _info: tuple, _id=None):
         _tile, obj, = _info
 
         # move forward
@@ -109,7 +123,7 @@ class BaseMap(AbstractMap):
 
         # shoot
         elif _action == command.SHOOT:
-            bullet = Bullet(obj.facing)
+            bullet = Bullet(_id, obj.facing)
             self.add_projectile(bullet, _tile)
 
         # something bad happened

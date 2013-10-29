@@ -28,9 +28,10 @@ import state
 class Bullet:
     """Draws and handles bullet actions."""
 
-    def __init__(self, facing):
+    def __init__(self, fired_by, facing):
         self.speed = 2
         self.facing = facing
+        self.fired_by = fired_by
         self.pixmap = QPixmap("tank/bullet_%s.png" % state.facing_to_string(self.facing))
 
 
