@@ -95,7 +95,7 @@ class BaseMap(AbstractMap):
 
         # shoot
         elif _action == command.SHOOT:
-            pass
+            print("Tank [%s] shooting... blam!" % tank.name)
 
         # something bad happened
         else:
