@@ -27,8 +27,8 @@ class GrassMap(BaseMap):
     """
     Implementation of an actual usable game map
     """
-    def __init__(self, width, height):
-        BaseMap.__init__(self, width, height)
+    def __init__(self, world, width, height):
+        BaseMap.__init__(self, world, width, height)
         for y in range(self.height):
             self._tiles.append([])
             for x in range(self.width):
@@ -39,3 +39,5 @@ class GrassMap(BaseMap):
         self._starting_areas.append((self.width-1, 0))
         self._starting_areas.append((0, self.height-1))
         self._starting_areas.append((self.width-1, self.height-1))
+
+        # add destructibles

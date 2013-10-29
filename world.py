@@ -20,6 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
+from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QWidget
 
@@ -31,7 +32,7 @@ from vehicle import Tank
 class World(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        self.map = maps.GrassMap(10, 10)
+        self.map = maps.GrassMap(self, 10, 10)
 
         red_tank = Tank(self, "Christopher Eccleston", Tank.RED, WanderBrain())
         self.add_tank(red_tank)
@@ -42,7 +43,10 @@ class World(QWidget):
         blue_tank = Tank(self, "Matt Smith", Tank.BLUE, WanderBrain())
         self.add_tank(blue_tank)
 
-        # probably have a timer here to trigger the map update
+        # timer to trigger the map updates
+        self.event_timer = QTimer(self)
+        self.event_timer.timeout.connect(self.map.update)
+        self.event_timer.start(100)  # will execute every 100 milliseconds (10 times per second)
 
     def paintEvent(self, paint_event):
         painter = QPainter(self)

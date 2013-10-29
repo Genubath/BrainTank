@@ -19,8 +19,29 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
+from PyQt5.Qt import pyqtSlot
+
+import command
 from maps import AbstractMap
+import state
 
 
 class BaseMap(AbstractMap):
-    pass
+
+    @pyqtSlot()
+    def update(self):
+        print("update map")
+        # for each tank check to see if it has an action
+        # if it does... update it... if not ask for another action
+        for tank_info in self._tanks:
+            _id, _x, _y, tank = tank_info
+            if tank.state is state.TANK_IDLE:
+                _action = tank.get_next_action()
+                action = command.command_to_string(_action)
+                print("Tank [%s] is taking action %s" % (tank.name, action))
+
+        # for each projectile... update it...
+        for boom in self._projectiles:
+            pass
+
+        self.world.update()

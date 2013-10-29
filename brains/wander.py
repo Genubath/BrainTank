@@ -23,6 +23,7 @@
 import random
 
 from brains import Brain
+import command
 
 
 class WanderBrain(Brain):
@@ -78,47 +79,25 @@ class WanderBrain(Brain):
 
     def __init__(self):
         Brain.__init__(self)
+        self._world = None
+        self.rand = random.SystemRandom()
 
-    def think(self, game):
+    @property
+    def world(self):
+        if self._world is None:
+            raise AttributeError("world was not set")
+        return self._world
+
+    def set_world(self, world):
+        self._world = world
+
+    def think(self):
         """
-        This brain will make a random choice for each action
+        This brain will make a weighted random choice for each action. There is a 10% chance that it will choose
+        to shoot.  If it does not shoot then it will "roll the dice" again to see what other action it will take.
         """
+        choice = self.rand.randint(1, 100)
+        if choice <= 10:
+            return command.SHOOT
 
-        x, y = game.position
-        dx, dy = game.direction
-
-        tile, item = game.radar(x + dx, y + dy)
-        print("at", x, y, "and facing", game.facing)
-        print("will be moving into:", tile, item)
-
-        def new_facing():
-            # out of all facing possibilities, choose one we don't have currently
-            new_facing = [game.UP, game.DOWN, game.LEFT, game.RIGHT]
-            new_facing.remove(game.facing)
-
-            # evaluate the possible facings and remove ones that will block tank
-            good_facing = []
-            for f in new_facing:
-                v = game.FACING_TO_VEC[f]
-                nt, ni = game.radar(x + v[0], y + v[1])
-                if ni is None and nt not in (None, game.WATER):
-                    good_facing.append(f)
-
-            return random.choice(good_facing or new_facing)
-
-        # avoid moving into blocking items
-        if item is not None or tile in (game.WATER, None):
-            game.forget() # clear possibly bad commands
-            game.face(new_facing())
-        elif random.randint(0,5) == 0:
-            # 1 out of 5 times choose a new direction
-            game.face(new_facing())
-
-        if game.FORWARD not in game.memory:
-            game.forward()
-
-        if random.randint(0,3) == 0:
-            # 1 out of 3 times try to shoot
-            game.shoot()
-
-        print("brain queue:", game.memory)
+        return self.rand.randint(1, 5)

@@ -27,3 +27,15 @@ TURN_LEFT = 4
 TURN_AROUND = 5
 
 SHOOT = 6
+
+
+def command_to_string(command):
+    __commands = dict()
+    __commands[MOVE_FORWARD] = "move forward"
+    __commands[MOVE_BACKWARD] = "move backward"
+    __commands[TURN_RIGHT] = "turn right"
+    __commands[TURN_LEFT] = "turn left"
+    __commands[TURN_AROUND] = "turn around"
+    __commands[SHOOT] = "shoot"
+
+    return __commands[command]

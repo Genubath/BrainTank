@@ -38,14 +38,12 @@ class Tank(QWidget):
 
         self.world = world
         self.name = name
-        self.facing = state.FACING_RIGHT
         self.color = color
+        self.brain = brain
+
+        self.facing = state.FACING_RIGHT
         self._images = dict()
-
-        self.offset_dt = (0,0)
-        self.offset = (0,0)
-
-        #self.brain = Brain(self)
+        self.state = state.TANK_IDLE
 
         # speed is per second
         self.speed = 100
@@ -58,3 +56,6 @@ class Tank(QWidget):
             self._images[self.facing] = pix
 
         return self._images[self.facing]
+
+    def get_next_action(self):
+        return self.brain.think()

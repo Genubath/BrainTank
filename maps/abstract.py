@@ -27,11 +27,14 @@ from vehicle import Tank
 
 
 class AbstractMap:
-    def __init__(self, width, height):
+    def __init__(self, world, width, height):
+        self.world = world
         self.width = width
         self.height = height
         self._tiles = []
+        self._destructibles = []
         self._tanks = []
+        self._projectiles = []
         self._starting_areas = []
 
     def add_tank(self, tank: Tank):
@@ -50,9 +53,9 @@ class AbstractMap:
         @type painter: QPainter
         """
         self._render_background(painter)
+        self._render_destructibles(painter)
         self._render_tanks(painter)
-        # render deductibles
-        # render tanks
+        self._render_projectiles(painter)
 
     def _render_background(self, painter):
         """
@@ -63,6 +66,12 @@ class AbstractMap:
                 tile = self._tiles[y][x]
                 box = tile.bounding_box()
                 painter.drawPixmap(101*x, 77*y, tile.pixmap, box.x(), box.y(), box.width(), box.height())
+
+    def _render_destructibles(self, painter):
+        pass
+
+    def _render_projectiles(self, painter):
+        pass
 
     def _render_tanks(self, painter):
         for tinfo in self._tanks:
