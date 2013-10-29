@@ -1,10 +1,9 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 ###############################################################################
 # Python AI Battle
 #
-# Copyright 2011 Matthew Thompson
+# Copyright 2013 David Vestal
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,9 +19,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-# put your custom thinkers here!
-# for now only the first two are loaded...
-
-DEBUG = False
-WIDTH = 10
-HEIGHT = 4
+from maps.abstract import AbstractMap
+from maps.base import BaseMap
+from maps.grass import GrassMap

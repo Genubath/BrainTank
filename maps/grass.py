@@ -1,10 +1,9 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 ###############################################################################
 # Python AI Battle
 #
-# Copyright 2011 Matthew Thompson
+# Copyright 2013 David Vestal
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,9 +19,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-# put your custom thinkers here!
-# for now only the first two are loaded...
+from maps import BaseMap
+from tiles import *
 
-DEBUG = False
-WIDTH = 10
-HEIGHT = 4
+
+class GrassMap(BaseMap):
+    """
+    Implementation of an actual usable game map
+    """
+    def __init__(self, world, width, height):
+        BaseMap.__init__(self, world, width, height)
+        for y in range(self.height):
+            self._tiles.append([])
+            for x in range(self.width):
+                self._tiles[y].append(GrassTile())
+
+        # set starting areas
+        self._starting_areas.append((0, 0))
+        self._starting_areas.append((self.width-1, 0))
+        self._starting_areas.append((0, self.height-1))
+        self._starting_areas.append((self.width-1, self.height-1))
+
+        # add destructibles

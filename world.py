@@ -20,302 +20,43 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-import pyglet
-from pyglet.window import key
-import pyglet.gl as gl
-import os, random
-from tank import Tank
-from symbols import Facing, Tile, Item
-import config
+from PyQt5.QtCore import QTimer, pyqtSignal
+from PyQt5.QtGui import QPainter
+from PyQt5.QtWidgets import QWidget
+
+from brains.wander import WanderBrain
+import maps
+from vehicle import Tank
 
 
-class VoidKill(Exception):
-    pass
+class World(QWidget):
+    game_over = pyqtSignal()
 
-class Drawable:
-    def __init__(self, name, filename):
-        self.name = name
-        self.img = pyglet.resource.image(filename)
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self.map = maps.GrassMap(self, 10, 10)
 
-    def blit(self, *args, **kwargs):
-        self.img.blit(*args, **kwargs)
+        red_tank = Tank(self, "Christopher Eccleston", Tank.RED, WanderBrain())
+        self.add_tank(red_tank)
 
-    def __repr__(self):
-        return "Drawable(%s)" % self.name
+        yellow_tank = Tank(self, "David Tennant", Tank.YELLOW, WanderBrain())
+        self.add_tank(yellow_tank)
 
+        blue_tank = Tank(self, "Matt Smith", Tank.BLUE, WanderBrain())
+        self.add_tank(blue_tank)
 
-class World:
-    '''Generates, draws, and provides info about game worlds.'''
+        # timer to trigger the map updates
+        self.event_timer = QTimer(self)
+        self.event_timer.timeout.connect(self.map.update)
+        self.event_timer.start(100)  # will execute every 100 milliseconds (10 times per second)
 
-    def __init__(self, width, height, seed=None):
-        self.width = width
-        self.height = height
-        self.rand = random.Random()
-        self.rand.seed(seed)
+    def paintEvent(self, paint_event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
 
-        self.bullets = []
-        self.explosions = []
-        self.game_over = False
+        self.map.render_map(painter)
 
-        self.TILE_TO_ENUM = {}
-        self.ITEM_TO_ENUM = {}
+    def add_tank(self, tank):
+        self.map.add_tank(tank)
 
-        self.load_resources()
-        self.generate_map()
-        if self.has_sound:
-            self.play_music()
-
-    def get_tile(self, x, y):
-        '''Returns a (tile, item) tuple.
-           tile will be a type:
-               world.grass, dirt, etc
-           item will be None or an item:
-               world.rock, tree, etc
-           '''
-        if not(x >= 0 and x < self.width):
-            return (None, None)
-
-        if not(y >= 0 and y < self.height):
-            return (None, None)
-
-        return self.__map[y][x]
-
-    def get_tile_enum(self, x, y):
-        '''Returns a (tile, item) tuple in enum form.
-            tile will be a value from symbols.Tile
-            item will be a value from symbols.Item'''
-
-        tile, item = self.get_tile(x,y)
-        return self.TILE_TO_ENUM[tile], self.ITEM_TO_ENUM[item]
-
-    def load_resources(self):
-
-        def load(name):
-            pack = "PlanetCute PNG"
-            return Drawable(name, '%s/%s.png' % (pack, name))
-
-        self.grass = load('Grass Block')
-        self.dirt = load('Dirt Block')
-        #self.wall = load('Stone Block Tall')
-        #self.brown = load('Brown Block')
-        self.plain = load('Plain Block')
-        self.water = load('Water Block')
-
-        self.safe = (self.dirt, self.grass, self.plain)
-        self.unsafe = (self.water,)
-
-        self.tiles = self.safe + self.unsafe
-        self.blocking_tiles = []
-
-        #self.spawn = load('Selector')
-        self.rock = load('Rock')
-        self.tree = load('Tree Tall')
-        #self.bush = load('Tree Short')
-        #self.heart = load('Heart')
-        #self.gem = load('Gem Blue')
-
-        self.items = (self.rock, self.tree)
-        self.blocking_items = self.items
-        self.destructible = self.items
-
-        self.tile_height = 171
-        self.tile_width = 101
-
-        self.half_stack = 43
-        self.tile_size = (101, -81)
-        self.tile_size_inv = (1.0/self.tile_size[0], 1.0/self.tile_size[1])
-        self.start_x = 0
-        self.start_y = (self.height-1) * -self.tile_size[1]
-
-        try:
-            self.main_music = pyglet.resource.media('Sounds/xmasmyth.mp3')
-            self.has_sound = True
-        except pyglet.media.riff.WAVEFormatException:
-            if config.DEBUG:
-                print "sound is DISABLED, please install avbin"
-            self.has_sound = False
-
-    def play_music(self):
-        self.main_music.play()
-
-    def generate_map(self):
-        self.__map = [[(self.grass, None)]*self.width for x in range(self.height)]
-
-        def distmap(pairs):
-            return [i for sublist in [[x]*y for x,y in pairs] for i in sublist]
-
-        # spawn lists
-        terrain = distmap(((self.grass, 20), (self.dirt, 5), (self.water, 1)))
-        items = distmap(((None, 20), (self.rock,2), (self.tree,2)))
-
-        # generate actual map
-        r = self.rand
-        for row in self.__map:
-            for i in range(len(row)):
-                tile = r.choice(terrain)
-                item = None
-                if tile in self.safe: # avoid water etc for placeables
-                    item = r.choice(items)
-
-                row[i] = (tile, item)
-
-        self.ITEM_TO_ENUM.update({
-            None:      None,
-            self.rock: Item.ROCK,
-            self.tree: Item.TREE,
-        })
-
-        self.TILE_TO_ENUM.update({
-            None:       None,
-            self.grass: Tile.GRASS,
-            self.dirt:  Tile.DIRT,
-            self.plain: Tile.PLAIN,
-            self.water: Tile.WATER,
-        })
-
-    def add_tanks(self, tank_colors):
-        s1 = (0, 0, Facing.RIGHT)
-        s2 = (0, self.height-1, Facing.UP)
-        s3 = (self.width-1, self.height-1, Facing.LEFT)
-        s4 = (self.width-1, 0, Facing.DOWN)
-
-        spawns = self.rand.sample((s1,s2,s3,s4), len(tank_colors))
-
-        self.tanks = []
-        for spawn,color in zip(spawns, tank_colors):
-            tank = Tank(self, spawn[0], spawn[1], spawn[2], color)
-            self.__set_tile(spawn, (self.plain, tank))
-            self.tanks.append(tank)
-
-        self.ITEM_TO_ENUM.update({
-            x: x.color.upper() for x in self.tanks
-        })
-
-    def __set_tile(self, pos, data):
-        #print "setting", pos, data
-        self.__map[pos[1]][pos[0]] = data
-
-    def world_to_screen(self, x, y):
-        '''Convert tile coordinates to screen pixel coordinates'''
-        x = self.start_x + x * self.tile_size[0]
-        y = self.start_y + (y-1) * self.tile_size[1]
-        return (x,y)
-
-    def screen_to_world(self, x, y):
-        '''Convert screen pixel coordinates to tile coordinates'''
-        x = (x - self.start_x) * self.tile_size_inv[0]
-        y = (y - self.start_y) * self.tile_size_inv[1] + 1
-        return (int(x),int(y))
-
-    def draw(self):
-        gl.glEnable(gl.GL_BLEND)
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-        gl.glEnable(gl.GL_DEPTH_TEST)
-        gl.glDepthFunc(gl.GL_LEQUAL)
-
-        dx = self.tile_size[0]
-        dy = self.tile_size[1]
-        stack = self.half_stack
-
-        # terrain pass
-        x, y = self.start_x, self.start_y
-        for row in self.__map:
-            x = self.start_x
-            for tile,item in row:
-                tile.blit(x,y,0)
-                x += dx
-            y += dy
-
-        # bullet pass
-
-        for bullet in self.bullets:
-            bullet.draw()
-
-        # item pass
-        x, y = self.start_x, self.start_y
-        for row in self.__map:
-            x = self.start_x
-            for tile,item in row:
-                if item is not None:
-                    item.blit(x,y+stack,1)
-                x += dx
-            y += dy
-
-    def warp(self, tank):
-        '''Called before tank sets x,y to new tile.'''
-        pos = tank.get_position()
-        wpos = tank.get_warp_destination()
-
-        src = self.get_tile(pos[0], pos[1])
-        dst = self.get_tile(wpos[0], wpos[1])
-        if dst[0] not in self.safe and tank.brain:
-            tank.brain.kill()
-            return
-
-        self.__set_tile(pos, (src[0], None))
-        self.__set_tile(wpos, (dst[0], tank))
-
-    def update(self, dt):
-        dead_expl = []
-        for explosion in self.explosions:
-            explosion.update(dt)
-            if not explosion.is_exploding():
-                dead_expl.append(explosion)
-        for explosion in dead_expl:
-            self.explosions.remove(explosion)
-
-        if not self.game_over:
-            # update bullets
-            dead_bullets = []
-            for bullet in self.bullets:
-                bullet.update(dt)
-                x,y = self.screen_to_world(bullet.x, bullet.y)
-                tile, item = self.get_tile(x,y)
-                #print "bullet at", x, y, "facing", bullet.facing
-                if x < 0 or y < 0 or x >= self.width or y >= self.height:
-                    dead_bullets.append(bullet)
-                elif item in self.destructible:
-                    self.detonate(item, pos=(x,y))
-                    dead_bullets.append(bullet)
-                #else:
-                    #self.__set_tile((x,y), (tile, self.spawn))
-
-            for bullet in dead_bullets:
-                self.bullets.remove(bullet)
-                bullet.tank.bullet = None # bleh
-                self.detonate(bullet)
-
-            # update tanks
-            tanks = list(self.tanks)
-            self.rand.shuffle(tanks)
-
-            for tank in tanks:
-                tank.update(dt)
-
-                # check for tank collision w/ bullets
-                # slow but i'm in a hurry and it's python anyway lol
-                trect = tank.rect()
-
-                for bullet in self.bullets:
-                    #print "checking", tank.color, "against", bullet.tank.color, "'s bullet"
-                    if bullet.tank is not tank and bullet.rect().touches(trect):
-                        tank.kill()
-                        self.detonate(tank)
-
-    def detonate(self, thing, pos=None):
-        '''Detonate (destroy) an object on the map, optionally clearing the item at pos'''
-
-        if config.DEBUG:
-            print "blowing up", thing
-
-        if thing in self.tanks:
-            print "GAME OVER!"
-            self.game_over = True
-
-        if pos:
-            tile, item = self.get_tile(pos[0], pos[1])
-            self.__set_tile(pos, (tile, None))
-
-    def add_bullet(self, bullet):
-        self.bullets.append(bullet)
 

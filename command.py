@@ -1,10 +1,9 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 ###############################################################################
 # Python AI Battle
 #
-# Copyright 2011 Matthew Thompson
+# Copyright 2013 David Vestal
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,39 +19,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-'''
-Phil's Brain
+MOVE_FORWARD = 1
+MOVE_BACKWARD = 2
 
-See the wander.py file for brain docs (too hard to keep two up to date)
-'''
+TURN_RIGHT = 3
+TURN_LEFT = 4
+TURN_AROUND = 5
 
-import random
-
-
-def turn_around():
-    '''Turn 180 degress around. New by Phil.'''
-    if facing is UP:
-        face(DOWN)
-    elif facing is DOWN:
-        face(UP)
-    elif facing is LEFT:
-        face(RIGHT)
-    elif facing is RIGHT:
-        face(LEFT)
+SHOOT = 6
 
 
-def think():
+def command_to_string(command):
+    __commands = dict()
+    __commands[MOVE_FORWARD] = "move forward"
+    __commands[MOVE_BACKWARD] = "move backward"
+    __commands[TURN_RIGHT] = "turn right"
+    __commands[TURN_LEFT] = "turn left"
+    __commands[TURN_AROUND] = "turn around"
+    __commands[SHOOT] = "shoot"
 
-    x, y = position
-    dx, dy = direction
-
-    tile, item = radar(x + dx, y +dy)
-
-    print "Tank: ", color, " Tile: ",tile, " Item: ", item
-
-    if tile is None or tile is WATER or item is not None:
-        print memory
-        turn_around()
-    else:
-        forward()
-
+    return __commands[command]

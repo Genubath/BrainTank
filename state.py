@@ -1,10 +1,9 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 ###############################################################################
 # Python AI Battle
 #
-# Copyright 2011 Matthew Thompson
+# Copyright 2013 David Vestal
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,9 +19,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-# put your custom thinkers here!
-# for now only the first two are loaded...
+TANK_IDLE = 1
+TANK_TURNING = 2
+TANK_SHOOTING = 3
+TANK_MOVING = 4
+TANK_DEAD = 5
 
-DEBUG = False
-WIDTH = 10
-HEIGHT = 4
+FACING_UP = 6
+FACING_RIGHT = 7
+FACING_DOWN = 8
+FACING_LEFT = 9
+
+
+def facing_to_string(facing):
+    if facing == FACING_UP:
+        return "up"
+    elif facing == FACING_DOWN:
+        return "down"
+    elif facing == FACING_LEFT:
+        return "left"
+    else:
+        return "right"

@@ -1,10 +1,9 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 ###############################################################################
 # Python AI Battle
 #
-# Copyright 2011 Matthew Thompson
+# Copyright 2013 David Vestal
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,25 +19,34 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-from utils import Enum
+from PyQt5.QtCore import QRectF
+from PyQt5.QtGui import QPixmap
 
 
-Command = Enum('FORWARD', 'BACKWARD', 'SHOOT')
+class Tile:
+    # possible tile types
+    DIRT = 'dirt'
+    GRASS = 'grass'
+    WATER = 'water'
 
-Facing = Enum('UP', 'DOWN', 'LEFT', 'RIGHT')
+    def __init__(self):
+        self.type = None
+        self.pixmap = None
 
-TankState = Enum('IDLE', 'MOVING', 'TURNING', 'SHOOTING', 'DEAD')
-
-# make sure Tiles and Items match what world contains!
-
-Tile = Enum('GRASS', 'DIRT', 'WATER', 'PLAIN')
-
-Item = Enum('TREE', 'ROCK', 'TANK_RED', 'TANK_BLUE')
+    @staticmethod
+    def bounding_box():
+        return QRectF(0, 55, 101, 77)
 
 
-FACING_TO_VEC = {
-    Facing.UP:    ( 0,-1),
-    Facing.DOWN:  ( 0, 1),
-    Facing.LEFT:  (-1, 0),
-    Facing.RIGHT: ( 1, 0)
-}
+class DirtTile(Tile):
+    def __init__(self):
+        Tile.__init__(self)
+        self.type = Tile.DIRT
+        self.pixmap = QPixmap("PlanetCute/Dirt_Block.png")
+
+
+class GrassTile(Tile):
+    def __init__(self):
+        Tile.__init__(self)
+        self.type = Tile.GRASS
+        self.pixmap = QPixmap("PlanetCute/Grass_Block.png")
