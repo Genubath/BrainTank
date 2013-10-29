@@ -9,7 +9,7 @@ the program, as well as many places where the efficiency of the logic can be gre
 requests when fixing bugs that everyone can use.
 
 ## Simulation Rules
-_EDIT:_ Not all of the simulation rules have been reimplemented yet.
+_EDIT: Not all of the simulation rules have been reimplemented yet._
 
 Every time a trank becomes "idle" it will run the `think()` function
 associated with that brain to queue up more commands.
@@ -20,7 +20,7 @@ Turning one facing takes half a second, turning twice takes one second.
 The shots move at twice the speed of a tank.
 
 ### Tile Rules
-_EDIT:_ Not all of the simulation rules have been reimplemented yet.
+_EDIT: Not all of the simulation rules have been reimplemented yet._
   * Crossing __dirt__ will take twice as long as regular tiles.
   * The tank will abort a move if it runs into a blocking tile or other tank.
   * Shots can destroy blocking tiles such as __trees__ or __rocks__.
