@@ -117,66 +117,66 @@ class BaseMap(AbstractMap):
             print("Object [%s] issued unknown action %s" % (obj.name, _action))
         return _info
 
-    def move_forward(self, tank_info):
-        _tile, tank = tank_info
+    def move_forward(self, _info):
+        _tile, tank = _info
         if tank.facing == state.FACING_RIGHT:
-            return self.move_right(tank_info)
+            return self.move_right(_info)
         elif tank.facing == state.FACING_LEFT:
-            return self.move_left(tank_info)
+            return self.move_left(_info)
         elif tank.facing == state.FACING_UP:
-            return self.move_up(tank_info)
+            return self.move_up(_info)
         elif tank.facing == state.FACING_DOWN:
-            return self.move_down(tank_info)
-        return tank_info
+            return self.move_down(_info)
+        return _info
 
-    def move_backward(self, tank_info):
-        _tile, tank = tank_info
+    def move_backward(self, _info):
+        _tile, tank = _info
         if tank.facing == state.FACING_RIGHT:
-            return self.move_left(tank_info)
+            return self.move_left(_info)
         elif tank.facing == state.FACING_LEFT:
-            return self.move_right(tank_info)
+            return self.move_right(_info)
         elif tank.facing == state.FACING_UP:
-            return self.move_down(tank_info)
+            return self.move_down(_info)
         elif tank.facing == state.FACING_DOWN:
-            return self.move_up(tank_info)
-        return tank_info
+            return self.move_up(_info)
+        return _info
 
-    def move_up(self, tank_info):
-        _tile, tank = tank_info
+    def move_up(self, _info):
+        _tile, tank = _info
         x, y = _tile
         new_y = y-1
         if new_y >= 0:
             _tile = (x, new_y)
             return _tile, tank
         # just return the original info so that we don't move if we've hit the edge
-        return tank_info
+        return _info
 
-    def move_down(self, tank_info):
-        _tile, tank = tank_info
+    def move_down(self, _info):
+        _tile, tank = _info
         x, y = _tile
         new_y = y+1
         if new_y < self.height:
             _tile = (x, new_y)
             return _tile, tank
         # just return the original info so that we don't move if we've hit the edge
-        return tank_info
+        return _info
 
-    def move_left(self, tank_info):
-        _tile, tank = tank_info
+    def move_left(self, _info):
+        _tile, tank = _info
         x, y = _tile
         new_x = x-1
         if new_x >= 0:
             _tile = (new_x, y)
             return _tile, tank
         # just return the original info so that we don't move if we've hit the edge
-        return tank_info
+        return _info
 
-    def move_right(self, tank_info):
-        _tile, tank = tank_info
+    def move_right(self, _info):
+        _tile, tank = _info
         x, y = _tile
         new_x = x+1
         if new_x < self.width:
             _tile = (new_x, y)
             return _tile, tank
         # just return the original info so that we don't move if we've hit the edge
-        return tank_info
+        return _info
