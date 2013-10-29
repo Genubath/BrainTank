@@ -36,7 +36,7 @@ class BaseMap(AbstractMap):
         for _id, bullet_info in self._projectiles.items():
             _tile, bullet = bullet_info
 
-            # destroy the bullet if it reaches the edge
+            # destroy the bullet if it has already reached the edge
             _x, _y = _tile
             if _x == 0 or _x == self.width-1 or _y == 0 or _y == self.height-1:
                 bullets_to_delete.append(_id)
