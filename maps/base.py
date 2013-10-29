@@ -26,6 +26,7 @@ from maps import AbstractMap
 import state
 from vehicle import Bullet
 
+
 class BaseMap(AbstractMap):
 
     @pyqtSlot()
