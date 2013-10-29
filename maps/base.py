@@ -40,9 +40,21 @@ class BaseMap(AbstractMap):
                 self._tanks[_id] = _updated_info
 
         # for each projectile... update it...
+        bullets_to_delete = []
         for _id, bullet_info in self._projectiles.items():
-            _updated_info = self.move_it(command.MOVE_FORWARD, bullet_info)
-            self._projectiles[_id] = _updated_info
+            _tile, bullet = bullet_info
+
+            # destroy the bullet if it reaches the edge
+            _x, _y = _tile
+            if _x == 0 or _x == self.width-1 or _y == 0 or _y == self.height-1:
+                bullets_to_delete.append(_id)
+            else:
+                _updated_info = self.move_it(command.MOVE_FORWARD, bullet_info)
+                self._projectiles[_id] = _updated_info
+
+        # delete bullets that were scheduled to be destroyed because this can't be done in the loop
+        for id in bullets_to_delete:
+            del self._projectiles[id]
 
         self.world.update()
 
