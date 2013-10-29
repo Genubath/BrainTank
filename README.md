@@ -11,7 +11,7 @@ requests when fixing bugs that everyone can use.
 ## Simulation Rules
 _EDIT: Not all of the simulation rules have been reimplemented yet._
 
-Every time a trank becomes "idle" it will run the `think()` function
+Every time a train becomes "idle" it will run the `think()` function
 associated with that brain to queue up more commands.
 The tank then executes these, which can take a variable amount of time.
 Tanks can also fire shots in the direction they are facing. 
@@ -31,10 +31,11 @@ Copy brains/wander.py to brains/yourname.py.  Rename the class from WanderBrain 
 
 ~~There is a small guide that describes what this brain does and what is available for brains to use in wander.py.~~
 
-When creating a tank in the world you then use your new class instead of WanderBrain()
+When creating a tank in the world you then add/fix the import and use your new class instead of WanderBrain()
 
 ```python
-blue_tank = Tank(self, "Matt Smith", Tank.BLUE, WanderBrain())
+from brains.doctor import TardisBrain
+blue_tank = Tank(self, "Matt Smith", Tank.BLUE, TardisBrain())
 self.add_tank(blue_tank)
 ```
 
