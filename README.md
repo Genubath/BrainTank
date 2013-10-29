@@ -1,11 +1,18 @@
 # Brain Tank
 ## Summary
-This is a little project to teach programming skills as well as basic AI.
+This is a little project to teach programming skills as well as basic AI.  It was started by a group associated
+with PySgf and rebuilt to use as a programming learning tool for the Lighthouse East Co-op programming class.
 To run it just execute main.py with python.
 
+As I am intending to use this as a teaching tool there are bugs to be fixed, one should be somewhat obvious when running
+the program, as well as many places where the efficiency of the logic can be greatly improved.  Be sure to submit pull
+requests when fixing bugs that everyone can use.
+
 ## Simulation Rules
-Every time a trank becomes "idle" it will run the `think()` function associated
-with that brain to queue up more commands. 
+_EDIT:_ Not all of the simulation rules have been reimplemented yet.
+
+Every time a trank becomes "idle" it will run the `think()` function
+associated with that brain to queue up more commands.
 The tank then executes these, which can take a variable amount of time.
 Tanks can also fire shots in the direction they are facing. 
 They must turn to aim. 
@@ -13,16 +20,23 @@ Turning one facing takes half a second, turning twice takes one second.
 The shots move at twice the speed of a tank.
 
 ### Tile Rules
+_EDIT:_ Not all of the simulation rules have been reimplemented yet.
   * Crossing __dirt__ will take twice as long as regular tiles.
   * The tank will abort a move if it runs into a blocking tile or other tank.
   * Shots can destroy blocking tiles such as __trees__ or __rocks__.
   * Driving into __water__ will destroy the tank.
 
 ## Making a Brain
-Copy brains/wander.py to brains/yourname.py and add "yourname" it to config.py.
-For now it will only read the first two brains listed.
-There is a small guide that describes what this brain does and what is 
-available for brains to use in wander.py.
+Copy brains/wander.py to brains/yourname.py.  Rename the class from WanderBrain to whatever name you'd like.
+
+~~There is a small guide that describes what this brain does and what is available for brains to use in wander.py.~~
+
+When creating a tank in the world you then use your new class instead of WanderBrain()
+
+```python
+blue_tank = Tank(self, "Matt Smith", Tank.BLUE, WanderBrain())
+self.add_tank(blue_tank)
+```
 
 ## TODO
   1. Add explosions and other animations.
@@ -30,15 +44,10 @@ available for brains to use in wander.py.
   3. Add GUI elements like victory screen, etc.
 
 ## Requirements
-  * [Python 2.7+](http://www.python.org/) - does NOT run on Python 3.
-  * [Pyglet](http://pyglet.org/)
-    * Windows users should use [pip](http://www.pip-installer.org/) to install.
-    * OSX users should use [this fork](http://code.google.com/r/evilphillip-cocoa-ctypes/) 
-      * If you have pip: `pip install https://github.com/downloads/pysgf/BrainTank/pyglet-evilphillip-cocoa-ctypes.tar.bz2`
-  * [AVBin](http://code.google.com/p/avbin/) - For playing music & sounds.
-    * Windows users should pull down http://code.google.com/p/avbin/downloads/detail?name=avbin-win32-5.zip.
-    * OSX users should use http://code.google.com/p/avbin/downloads/detail?name=avbin-darwin-x86-64-8.zip.
-      * After downloading the zip, unzip & run sudo install.sh.
+  * [Python 3.0+](http://www.python.org/) - have NOT tested it on Python 2.7, but it should work.
+  * [Qt 5.1+] (http://qt-project.org/)
+    * Windows, OSX and Linux users (until 5.1 is available via standard repos) can install Qt from the downloads page (http://qt-project.org/downloads)
+  * [PyQt](http://www.riverbankcomputing.com/software/pyqt/intro) - For Python bindings to the Qt framework
 
 ## Licensing
 The code is GPLv3, but the art/sound is not.
