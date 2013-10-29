@@ -19,8 +19,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-from PyQt5.Qt import pyqtSlot
-
 import command
 from maps import AbstractMap
 import state
@@ -29,7 +27,6 @@ from vehicle import Bullet
 
 class BaseMap(AbstractMap):
 
-    @pyqtSlot()
     def update(self):
         # for each projectile... update it...
         bullets_to_delete = []
@@ -61,6 +58,13 @@ class BaseMap(AbstractMap):
 
         for id in tanks_to_delete:
             del self._tanks[id]
+
+        # check for a winner
+        if len(self._tanks.keys()) == 1:
+            for _id, tank_info in self._tanks.items():
+                _tile, tank = tank_info
+                print("WINNER WINNER CHICKEN DINNER!!! %s wins!" % tank.name)
+                self.world.game_over.emit()
 
         # for each tank check to see if it has an action
         # if it does... update it... if not ask for another action

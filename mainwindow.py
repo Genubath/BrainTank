@@ -21,7 +21,7 @@
 
 import inspect, os
 
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, pyqtSignal
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtWidgets import QMainWindow, QWidget
 
@@ -33,7 +33,10 @@ class BrainTankWindow(QMainWindow):
         QWidget.__init__(self, parent)
         self.setWindowTitle("BrainTank... BOOM!")
         self.setFixedSize(1024, 768)
-        self.setCentralWidget(World())
+
+        self.world = World()
+        self.world.game_over.connect(self.close)
+        self.setCentralWidget(self.world)
 
         self.media_player = QMediaPlayer()
         self.media_player.stateChanged.connect(self.media_player_state_changed)

@@ -20,7 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, pyqtSignal
 from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QWidget
 
@@ -30,6 +30,8 @@ from vehicle import Tank
 
 
 class World(QWidget):
+    game_over = pyqtSignal()
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.map = maps.GrassMap(self, 10, 10)
