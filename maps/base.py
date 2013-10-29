@@ -24,7 +24,7 @@ from PyQt5.Qt import pyqtSlot
 import command
 from maps import AbstractMap
 import state
-
+from vehicle import Bullet
 
 class BaseMap(AbstractMap):
 
@@ -40,67 +40,69 @@ class BaseMap(AbstractMap):
                 self._tanks[_id] = _updated_info
 
         # for each projectile... update it...
-        for boom in self._projectiles:
-            pass
+        for _id, bullet_info in self._projectiles.items():
+            _updated_info = self.move_it(command.MOVE_FORWARD, bullet_info)
+            self._projectiles[_id] = _updated_info
 
         self.world.update()
 
-    def move_it(self, _action, tank_info: tuple):
-        _tile, tank, = tank_info
+    def move_it(self, _action, _info: tuple):
+        _tile, obj, = _info
 
         # move forward
         if _action == command.MOVE_FORWARD:
-            return self.move_forward(tank_info)
+            return self.move_forward(_info)
 
         # move backward
         elif _action == command.MOVE_BACKWARD:
-            return self.move_backward(tank_info)
+            return self.move_backward(_info)
 
         # turn left
         elif _action == command.TURN_LEFT:
-            if tank.facing == state.FACING_RIGHT:
-                tank.facing = state.FACING_UP
-            elif tank.facing == state.FACING_DOWN:
-                tank.facing = state.FACING_RIGHT
-            elif tank.facing == state.FACING_LEFT:
-                tank.facing = state.FACING_DOWN
-            elif tank.facing == state.FACING_UP:
-                tank.facing = state.FACING_LEFT
+            if obj.facing == state.FACING_RIGHT:
+                obj.facing = state.FACING_UP
+            elif obj.facing == state.FACING_DOWN:
+                obj.facing = state.FACING_RIGHT
+            elif obj.facing == state.FACING_LEFT:
+                obj.facing = state.FACING_DOWN
+            elif obj.facing == state.FACING_UP:
+                obj.facing = state.FACING_LEFT
 
         # turn right
         elif _action == command.TURN_RIGHT:
-            if tank.facing == state.FACING_RIGHT:
-                tank.facing = state.FACING_DOWN
-            elif tank.facing == state.FACING_DOWN:
-                tank.facing = state.FACING_LEFT
-            elif tank.facing == state.FACING_LEFT:
-                tank.facing = state.FACING_UP
-            elif tank.facing == state.FACING_UP:
-                tank.facing = state.FACING_RIGHT
+            if obj.facing == state.FACING_RIGHT:
+                obj.facing = state.FACING_DOWN
+            elif obj.facing == state.FACING_DOWN:
+                obj.facing = state.FACING_LEFT
+            elif obj.facing == state.FACING_LEFT:
+                obj.facing = state.FACING_UP
+            elif obj.facing == state.FACING_UP:
+                obj.facing = state.FACING_RIGHT
 
         # turn around
         elif _action == command.TURN_AROUND:
-            if tank.facing == state.FACING_RIGHT:
-                tank.facing = state.FACING_LEFT
-            elif tank.facing == state.FACING_LEFT:
-                tank.facing = state.FACING_RIGHT
-            elif tank.facing == state.FACING_DOWN:
-                tank.facing = state.FACING_UP
-            elif tank.facing == state.FACING_UP:
-                tank.facing = state.FACING_DOWN
+            if obj.facing == state.FACING_RIGHT:
+                obj.facing = state.FACING_LEFT
+            elif obj.facing == state.FACING_LEFT:
+                obj.facing = state.FACING_RIGHT
+            elif obj.facing == state.FACING_DOWN:
+                obj.facing = state.FACING_UP
+            elif obj.facing == state.FACING_UP:
+                obj.facing = state.FACING_DOWN
             else:
                 # this should never happen... restoring sanity to the world
-                tank.facing = state.FACING_RIGHT
-            return _tile, tank
+                obj.facing = state.FACING_RIGHT
+            return _tile, obj
 
         # shoot
         elif _action == command.SHOOT:
-            print("Tank [%s] shooting... blam!" % tank.name)
+            bullet = Bullet(obj.facing)
+            self.add_projectile(bullet, _tile)
 
         # something bad happened
         else:
-            print("Tank [%s] issued unknown action %s" % (tank.name, _action))
-        return tank_info
+            print("Object [%s] issued unknown action %s" % (obj.name, _action))
+        return _info
 
     def move_forward(self, tank_info):
         _tile, tank = tank_info

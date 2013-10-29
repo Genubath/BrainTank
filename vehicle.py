@@ -26,7 +26,16 @@ from PyQt5.QtWidgets import QWidget
 import state
 
 
-class Tank(QWidget):
+class Bullet:
+    """Draws and handles bullet actions."""
+
+    def __init__(self, facing):
+        self.speed = 2
+        self.facing = facing
+        self.pixmap = QPixmap("tank/bullet_%s.png" % state.facing_to_string(self.facing))
+
+
+class Tank:
     """Draws and handles tank actions."""
 
     RED = "red"
@@ -34,8 +43,6 @@ class Tank(QWidget):
     BLUE = "blue"
 
     def __init__(self, world, name, color, brain):
-        QWidget.__init__(self)
-
         self.world = world
         self.name = name
         self.color = color
@@ -46,7 +53,7 @@ class Tank(QWidget):
         self.state = state.TANK_IDLE
 
         # speed is per second
-        self.speed = 100
+        self.speed = 1
         self.reduced_speed = self.speed *0.5
 
     @property
