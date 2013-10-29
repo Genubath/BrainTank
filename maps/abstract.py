@@ -33,15 +33,14 @@ class AbstractMap:
         self.height = height
         self._tiles = []
         self._destructibles = []
-        self._tanks = []
+        self._tanks = dict()
         self._projectiles = []
         self._starting_areas = []
 
     def add_tank(self, tank: Tank):
         _start_tile = self._starting_areas.pop(0)
-        _x, _y = AbstractMap.tile_at(_start_tile)
         _id = uuid.uuid4()
-        self._tanks.append((_id, _x, _y, tank))
+        self._tanks[_id] = (_start_tile, tank)
 
     @staticmethod
     def tile_at(point: tuple):
@@ -74,6 +73,7 @@ class AbstractMap:
         pass
 
     def _render_tanks(self, painter):
-        for tinfo in self._tanks:
-            _id, _x, _y, _tank = tinfo
-            painter.drawPixmap(_x, _y, _tank.pixmap)
+        for _id, tank_info in self._tanks.items():
+            _tile, _tank = tank_info
+            x, y = AbstractMap.tile_at(_tile)
+            painter.drawPixmap(x, y, _tank.pixmap)
