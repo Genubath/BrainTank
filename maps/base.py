@@ -31,15 +31,6 @@ class BaseMap(AbstractMap):
 
     @pyqtSlot()
     def update(self):
-        # for each tank check to see if it has an action
-        # if it does... update it... if not ask for another action
-        for _id, tank_info in self._tanks.items():
-            _tile, tank = tank_info
-            if tank.state is state.TANK_IDLE:
-                _action = tank.get_next_action()
-                _updated_info = self.move_it(_action, tank_info)
-                self._tanks[_id] = _updated_info
-
         # for each projectile... update it...
         bullets_to_delete = []
         for _id, bullet_info in self._projectiles.items():
@@ -56,6 +47,15 @@ class BaseMap(AbstractMap):
         # delete bullets that were scheduled to be destroyed because this can't be done in the loop
         for id in bullets_to_delete:
             del self._projectiles[id]
+
+        # for each tank check to see if it has an action
+        # if it does... update it... if not ask for another action
+        for _id, tank_info in self._tanks.items():
+            _tile, tank = tank_info
+            if tank.state is state.TANK_IDLE:
+                _action = tank.get_next_action()
+                _updated_info = self.move_it(_action, tank_info)
+                self._tanks[_id] = _updated_info
 
         self.world.update()
 
