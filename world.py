@@ -36,7 +36,7 @@ class World(QWidget):
         QWidget.__init__(self, parent)
         self.map = maps.GrassMap(self, 10, 10)
 
-        red_tank = Tank(self, "Christopher Eccleston", Tank.RED, WanderBrain())
+        red_tank = Tank(self, "David Vestal", Tank.RED, WanderBrain())
         self.add_tank(red_tank)
 
         yellow_tank = Tank(self, "David Tennant", Tank.YELLOW, WanderBrain())
